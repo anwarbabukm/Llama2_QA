@@ -55,7 +55,8 @@ def load_model_and_tokenizer():
     device_map='auto',
     use_auth_token=hf_auth)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer = AutoTokenizer.from_pretrained(model_id,
+    use_auth_token=hf_auth)
     model.eval()
     
     return model, tokenizer
