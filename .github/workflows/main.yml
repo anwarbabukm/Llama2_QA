@@ -1,4 +1,4 @@
-name: CI/CD with Secrets
+name: Access Secrets
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  access-secrets:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,12 +18,7 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Run Streamlit Application
-        run: |
-          streamlit run streamlit_app.py
+      - name: Print Secret
+        run: echo "Secret is accessible"
         env:
           HF_KEY: ${{ secrets.HF_KEY }}
