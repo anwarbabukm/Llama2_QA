@@ -30,7 +30,7 @@ model_id = 'meta-llama/Llama-2-7b-chat-hf'
 device = f'cuda:{cuda.current_device()}' if cuda.is_available() else 'cpu'
 
 # Access the secret
-hf_auth = os.environ.get('hf_key')
+hf_auth = os.environ.get('HF_KEY')
 
 # set quantization configuration to load large model with less GPU memory
 # this requires the `bitsandbytes` library
