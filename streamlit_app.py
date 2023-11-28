@@ -39,7 +39,7 @@ bnb_config = transformers.BitsAndBytesConfig(
 )
 
 # begin initializing HF items, you need an access token
-hf_auth = os.environ.get('HF_KEY')
+hf_auth = os.environ['HF_KEY']
 
 model_config = transformers.AutoConfig.from_pretrained(
     model_id, use_auth_token=hf_auth
