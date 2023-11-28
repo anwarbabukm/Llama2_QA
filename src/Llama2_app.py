@@ -23,13 +23,42 @@ from transformers import pipeline
 import os 
 import chromadb
 from chromadb.config import Settings 
+from torch import cuda, bfloat16
 
-model_dir = "Llama-2-7b-chat-hf"
+model_id = 'meta-llama/Llama-2-7b-chat-hf'
+
+device = f'cuda:{cuda.current_device()}' if cuda.is_available() else 'cpu'
+
+# Access the secret
+hf_auth = os.environ.get('hf_key')
+
+# set quantization configuration to load large model with less GPU memory
+# this requires the `bitsandbytes` library
+bnb_config = transformers.BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type='nf4',
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_compute_dtype=bfloat16
+)
+
+# begin initializing HF items, you need an access token
+model_config = transformers.AutoConfig.from_pretrained(
+    model_id, use_auth_token=hf_auth
+)
 
 @st.cache_resource
-def load_model_and_tokenizer(model_dir):
-    model = LlamaForCausalLM.from_pretrained(model_dir)
-    tokenizer = LlamaTokenizer.from_pretrained(model_dir)
+def load_model_and_tokenizer():
+    model = transformers.AutoModelForCausalLM.from_pretrained(
+    model_id,
+    trust_remote_code=True,
+    config=model_config,
+    quantization_config=bnb_config,
+    device_map='auto',
+    use_auth_token=hf_auth)
+
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model.eval()
+    
     return model, tokenizer
 
 #create embeddings here
